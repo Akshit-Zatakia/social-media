@@ -33,7 +33,7 @@ function Register() {
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/" />;
+    return <Redirect to="/post" />;
   }
 
   return (

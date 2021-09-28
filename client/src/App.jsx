@@ -9,6 +9,8 @@ import Home from "./components/home/Home";
 import Login from "./components/login/Login";
 import Alert from "./components/alert/Alert";
 import { loadUser } from "./redux/actions/auth";
+import Post from "./components/posts/Post";
+import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
   useEffect(() => {
@@ -25,6 +27,7 @@ function App() {
             <Switch>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
+              <PrivateRoute exact path="/post" component={Post} />
             </Switch>
           </div>
         </Fragment>

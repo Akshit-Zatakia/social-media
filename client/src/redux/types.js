@@ -6,3 +6,7 @@ export const REMOVE_ALERT = "REMOVE_ALERT";
 export const USERS_LOADED = "USERS_LOADED";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
+
+// post
+export const GET_POSTS = "GET_POSTS";
+export const SET_CURRENT_PAGE = "SET_CURRENT_PAGE";

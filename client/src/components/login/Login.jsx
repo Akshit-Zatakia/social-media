@@ -30,7 +30,7 @@ function Login() {
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/" />;
+    return <Redirect to="/post" />;
   }
 
   return (
