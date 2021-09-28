@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router";
+import { register } from "../../redux/actions/auth";
+
 function Register() {
-  // state for form
-  const [formData, setFormData] = useState({
+  // get user auth state
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
+  const initialState = {
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-  });
+  };
+
+  // state for form
+  const [formData, setFormData] = useState(initialState);
 
   // onChange input event
   const handleChange = (e) => {
@@ -17,8 +28,13 @@ function Register() {
   // submit the formdata
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    dispatch(register(formData));
+    setFormData(initialState);
   };
+
+  if (isAuthenticated) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="center">

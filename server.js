@@ -2,12 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const connectToDatabase = require("./config/database");
 const app = express();
+const cors = require("cors");
 
 // connect to database
 connectToDatabase();
 
 // middleware
 app.use(express.json({ extended: false }));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 // routes
 app.use("/api/users", require("./routes/api/users"));

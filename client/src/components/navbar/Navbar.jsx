@@ -1,7 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function Navbar() {
+  // get the user authentication state
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   const guestLinks = (
     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
       <li className="nav-item">
@@ -17,6 +21,16 @@ function Navbar() {
       <li className="nav-item">
         <Link className="nav-link active" aria-current="page" to="/login">
           Login
+        </Link>
+      </li>
+    </ul>
+  );
+
+  const authLinks = (
+    <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+      <li className="nav-item">
+        <Link className="nav-link active" aria-current="page" to="/">
+          Home
         </Link>
       </li>
     </ul>
@@ -40,7 +54,7 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {guestLinks}
+          {isAuthenticated ? authLinks : guestLinks}
         </div>
       </div>
     </nav>

@@ -2,14 +2,18 @@ import "./App.css";
 import { Provider } from "react-redux";
 import store from "./store";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import Register from "./components/register/Register";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./components/home/Home";
 import Login from "./components/login/Login";
 import Alert from "./components/alert/Alert";
+import { loadUser } from "./redux/actions/auth";
 
 function App() {
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
   return (
     <Provider store={store}>
       <Router>
