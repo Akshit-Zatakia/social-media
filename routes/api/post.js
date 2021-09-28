@@ -94,6 +94,7 @@ router.put("/like/:id", auth, async (req, res) => {
         .json({ message: "Post already liked", error: true });
     }
 
+    // add the like in post likes array
     await Post.findOneAndUpdate(
       { _id: req.params.id },
       { $push: { likes: { user: req.user.id } } }
@@ -116,21 +117,26 @@ router.put("/like/:id", auth, async (req, res) => {
 
 router.put("/unlike/:id", auth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findOne({
+      _id: req.params.id,
+      "likes.user": req.user.id,
+    });
     // Check is post has already been liked
-    if (
-      post.likes.filter((like) => like.user.toString() === req.user.id)
-        .length === 0
-    ) {
-      return res.status(400).json({ msg: "Post has not been liked" });
+    if (!post) {
+      return res
+        .status(400)
+        .json({ message: "Please like the post first!", error: true });
     }
-    // Get remove index
-    const removeIndex = post.likes
-      .map((like) => like.user.toString())
-      .indexOf(req.user.id);
-    post.likes.splice(removeIndex, 1);
-    await post.save();
-    res.json(post.likes);
+
+    // delete the like in post likes array
+    await Post.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull: { likes: { user: req.user.id } } }
+    );
+    res.json({
+      message: "Succeed!",
+      error: false,
+    });
   } catch (e) {
     console.error(e.message);
     res.status(500).send("Server error");
@@ -142,28 +148,35 @@ router.put("/unlike/:id", auth, async (req, res) => {
 // @access Private
 router.post(
   "/comment/:id",
-  [auth, [check("text", "Text is required").not().isEmpty()]],
+  [auth, [check("text", "Text is required").notEmpty()]],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    const message = getErrorMessage(validationResult(req));
+    if (message) {
+      return res.status(400).json({ message, error: true });
     }
     try {
-      const user = await User.findById(req.user.id).select("-password");
+      // check if post exists
       const post = await Post.findById(req.params.id);
+      if (!post) {
+        return res.status(400).json({
+          message: "Post not found!",
+          error: true,
+        });
+      }
 
-      const newComment = {
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id,
-      };
-
-      post.comments.unshift(newComment);
-      await post.save();
-      res.json(post.comments);
+      // add the comment in post comments array
+      await Post.findByIdAndUpdate(req.params.id, {
+        $push: { comments: { user: req.user.id, text: req.body.text } },
+      });
+      res.json({
+        message: "Succeed!",
+        error: false,
+      });
     } catch (e) {
-      console.error(e.message);
+      res.status(500).json({
+        message: e.message,
+        error: true,
+      });
     }
   }
 );
@@ -174,34 +187,31 @@ router.post(
 
 router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    // Pull out comment
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    // Make sure comment exists
-    if (!comment) {
-      return res.status(404).json({ msg: "Comment not found" });
+    // check if comment exists or not
+    const isCommentExists = await Post.findOne({
+      _id: req.params.id,
+      "comments.id": req.params.comment_id,
+    });
+    if (!isCommentExists) {
+      return res.status(400).json({
+        message: "Comment not found!",
+        error: true,
+      });
     }
 
-    // Check user
-    if (comment.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "User not authorized" });
-    }
+    await Post.findByIdAndUpdate(req.params.id, {
+      $pull: { comments: { _id: req.params.comment_id } },
+    });
 
-    // Get remove index
-    const removeIndex = post.comments
-      .map((comment) => comment.user.toString())
-      .indexOf(req.user.id);
-    post.comments.splice(removeIndex, 1);
-    await post.save();
-    res.json(post.comments);
+    res.json({
+      message: "Comment deleted!",
+      error: false,
+    });
   } catch (e) {
-    console.error(e.message);
-    if (e.kind === "ObjectId") {
-      return res.status(404).json({ msg: "Comment not found" });
-    }
-    res.status(500).send("Server error");
+    res.status(500).json({
+      message: e.message,
+      error: true,
+    });
   }
 });
 
