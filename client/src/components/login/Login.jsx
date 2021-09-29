@@ -30,7 +30,7 @@ function Login() {
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/post" />;
+    return <Redirect to="/posts" />;
   }
 
   return (
@@ -62,7 +62,7 @@ function Login() {
             />
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-outline-dark">
             Login
           </button>
         </form>

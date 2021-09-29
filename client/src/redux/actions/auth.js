@@ -2,7 +2,7 @@ import axios from "../../axios";
 import { apis } from "../../api";
 
 import { setAlert } from "./alert";
-import { LOGIN_FAIL, LOGIN_SUCCESS, USERS_LOADED } from "../types";
+import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, USERS_LOADED } from "../types";
 import setAuthToken from "../../utils/setAuthToken";
 
 // load user
@@ -64,4 +64,9 @@ export const login = (body) => async (dispatch) => {
       type: LOGIN_FAIL,
     });
   }
+};
+
+// logout
+export const logout = () => (dispatch) => {
+  dispatch({ type: LOGOUT });
 };

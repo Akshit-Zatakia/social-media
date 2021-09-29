@@ -5,6 +5,20 @@
   align-items: center;
 }
 
+.dialog_body {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment_body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 /* Loader css */
 
 .loader {

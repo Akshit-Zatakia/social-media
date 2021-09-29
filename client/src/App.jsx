@@ -11,6 +11,12 @@ import Alert from "./components/alert/Alert";
 import { loadUser } from "./redux/actions/auth";
 import Post from "./components/posts/Post";
 import PrivateRoute from "./routes/PrivateRoute";
+import SinglePost from "./components/posts/SinglePost";
+import setAuthToken from "./utils/setAuthToken";
+
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
 
 function App() {
   useEffect(() => {
@@ -27,7 +33,8 @@ function App() {
             <Switch>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
-              <PrivateRoute exact path="/post" component={Post} />
+              <PrivateRoute exact path="/posts" component={Post} />
+              <PrivateRoute exact path="/post/:id" component={SinglePost} />
             </Switch>
           </div>
         </Fragment>

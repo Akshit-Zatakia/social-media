@@ -20,6 +20,10 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/post", require("./routes/api/post"));
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+
 // server starts listening
 // PORT : 8081
 app.listen(process.env.PORT, () =>

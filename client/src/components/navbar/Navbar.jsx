@@ -1,10 +1,18 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../../redux/actions/auth";
 
 function Navbar() {
+  const dispatch = useDispatch();
+
   // get the user authentication state
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // handle logout
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   const guestLinks = (
     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -34,9 +42,14 @@ function Navbar() {
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link active" aria-current="page" to="/post">
+        <Link className="nav-link active" aria-current="page" to="/posts">
           Posts
         </Link>
+      </li>
+      <li className="nav-item">
+        <button className="btn btn-outline-dark" onClick={handleLogout}>
+          Logout
+        </button>
       </li>
     </ul>
   );

@@ -29,12 +29,13 @@ router.post(
 
     try {
       // creating new post
-      await Post.create({
+      const post = await Post.create({
         user: req.user.id,
         text,
       });
 
       res.json({
+        data: post,
         message: "Posted successfully.",
         error: false,
       });
@@ -56,13 +57,10 @@ router.get("/:pageNo", auth, async (req, res) => {
     let posts = await Post.find()
       .limit(pageLimit)
       .skip((page - 1) * pageLimit)
+      .sort({ createdAt: -1 })
       .exec();
     if (posts.length == 0) {
-      return res.status(400).json({
-        message: "No posts available!",
-        data: [],
-        error: true,
-      });
+      return;
     }
 
     res.json({
@@ -83,7 +81,7 @@ router.get("/:pageNo", auth, async (req, res) => {
 // @access Private
 router.put("/like/:id", auth, async (req, res) => {
   try {
-    const post = await Post.findOne({
+    let post = await Post.findOne({
       _id: req.params.id,
       "likes.user": req.user.id,
     });
@@ -99,7 +97,11 @@ router.put("/like/:id", auth, async (req, res) => {
       { _id: req.params.id },
       { $push: { likes: { user: req.user.id } } }
     );
+
+    post = await Post.findById(req.params.id);
+
     res.json({
+      data: post.likes,
       message: "Succeed!",
       error: false,
     });
@@ -117,7 +119,7 @@ router.put("/like/:id", auth, async (req, res) => {
 
 router.put("/unlike/:id", auth, async (req, res) => {
   try {
-    const post = await Post.findOne({
+    let post = await Post.findOne({
       _id: req.params.id,
       "likes.user": req.user.id,
     });
@@ -133,7 +135,11 @@ router.put("/unlike/:id", auth, async (req, res) => {
       { _id: req.params.id },
       { $pull: { likes: { user: req.user.id } } }
     );
+
+    post = await Post.findById(req.params.id);
+
     res.json({
+      data: post.likes,
       message: "Succeed!",
       error: false,
     });
@@ -156,7 +162,7 @@ router.post(
     }
     try {
       // check if post exists
-      const post = await Post.findById(req.params.id);
+      let post = await Post.findById(req.params.id);
       if (!post) {
         return res.status(400).json({
           message: "Post not found!",
@@ -168,7 +174,16 @@ router.post(
       await Post.findByIdAndUpdate(req.params.id, {
         $push: { comments: { user: req.user.id, text: req.body.text } },
       });
+
+      post = await Post.findById(req.params.id)
+        .populate({
+          path: "comments",
+          populate: { path: "user" },
+        })
+        .select("-password");
+
       res.json({
+        data: post.comments,
         message: "Succeed!",
         error: false,
       });
@@ -210,6 +225,41 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
   } catch (e) {
     res.status(500).json({
       message: e.message,
+      error: true,
+    });
+  }
+});
+
+// @route  GET api/post/single/:postId
+// @desc   Get a post
+// @access Private
+router.get("/single/:postId", auth, async (req, res) => {
+  const postId = req.params.postId;
+  try {
+    let post = await Post.findById(postId)
+      .populate("user")
+      .populate({
+        path: "comments",
+        populate: { path: "user" },
+      })
+      .select("-password")
+      .exec();
+    if (!post) {
+      return res.status(400).json({
+        message: "Post not found!",
+        data: [],
+        error: true,
+      });
+    }
+
+    res.json({
+      data: post,
+      message: "Succeed!",
+      error: false,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
       error: true,
     });
   }

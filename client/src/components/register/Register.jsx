@@ -87,7 +87,7 @@ function Register() {
             />
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-outline-dark">
             Register
           </button>
         </form>
