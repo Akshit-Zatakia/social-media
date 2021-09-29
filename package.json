@@ -1,6 +1,6 @@
 {
   "name": "social_media",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "This is developed using MERN stack.",
   "main": "server.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "engines": {
-    "node": "14.18.0"
+    "node": "16.8.0",
+    "npm": "7.21.0"
   },
   "repository": {
     "type": "git",
