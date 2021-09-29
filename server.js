@@ -9,11 +9,6 @@ connectToDatabase();
 
 // middleware
 app.use(express.json({ extended: false }));
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
 
 // routes
 app.use("/api/users", require("./routes/api/users"));
