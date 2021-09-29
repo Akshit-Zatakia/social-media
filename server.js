@@ -21,7 +21,7 @@ app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/post", require("./routes/api/post"));
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
+  app.use(express.static("client/dist"));
 }
 
 // server starts listening
