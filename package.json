@@ -12,6 +12,9 @@
     "server": "nodemon server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
+  "engines": {
+    "node": "14.18.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Akshit-Zatakia/social-media.git"
